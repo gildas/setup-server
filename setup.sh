@@ -93,7 +93,7 @@ debug "Done\n"
 echo "Running on $NAME release $VERSION"
 echo "To install software and configure your system, you need to be a sudoer and will have to enter your password once during this script."
 
-if prompt "You server hostname is: $(hostname), do you want to change it? [yn] " ; then
+if prompt "The server hostname is: $(hostname), do you want to change it? [yn] " ; then
   read -p "Enter the new hostname without its ip domain [$(hostname)]: " value
   if [[ ! -z "$value" ]] ; then
     echo "Updating server hostname to: $value"
