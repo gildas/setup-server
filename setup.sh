@@ -103,7 +103,7 @@ if prompt "The server hostname is: $(hostname), do you want to change it? [yn] "
         for config in /etc/sysconfig/network-scripts/ifcfg-* ; do
           interface="$(basename $config | cut --delimiter=- --fields=2)"
           if [ ! -z "$(grep 'BOOTPROTO="dhcp"' $config)" ] ; then
-            echo "Configuring interface $(interface)"
+            echo "Configuring interface $interface"
             if [ -z "$(grep DHCP_HOSTNAME $config)" ] ; then
               $NOOP echo "DHCP_HOSTNAME=\"$value\"" | sudo tee --append $config > /dev/null
             else
