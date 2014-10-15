@@ -111,7 +111,7 @@ if prompt "The server hostname is: $(hostname), do you want to change it? [yn] "
             fi
           fi
         done
-        #$NOOP sudo systemctl restart network
+        $NOOP sudo systemctl restart network
       fi
     fi
   fi
