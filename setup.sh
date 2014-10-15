@@ -107,7 +107,7 @@ if prompt "The server hostname is: $(hostname), do you want to change it? [yn] "
             if [ -z "$(grep DHCP_HOSTNAME $config)" ] ; then
               $NOOP echo "DHCP_HOSTNAME=\"$value\"" | sudo tee --append $config > /dev/null
             else
-              echo "Need to replace DHCP_HOSTNAME"
+              $NOOP sudo sed -i "/^DHCP_HOSTNAME/s/\".*\"/\"$value\"/" $config
             fi
           fi
         done
