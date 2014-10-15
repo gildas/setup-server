@@ -99,7 +99,7 @@ if prompt "The server hostname is: $(hostname), do you want to change it? [yn] "
     echo "Updating server hostname to: $value"
     $NOOP echo "$value" | sudo tee /etc/hostname > /dev/null
     if [ "$ID" == "centos" ] ; then
-      if [ "VERSION_ID" == "7" ] ; then
+      if [ "$VERSION_ID" == "7" ] ; then
         for config in /etc/sysconfig/network-scripts/ifcfg-* ; do
           if [ ! -z "$(grep 'BOOTPROTO="dhcp"' $config)" ] ; then
             echo "Configuring interface $(basename $config | cut -f- -d1)"
