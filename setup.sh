@@ -30,6 +30,18 @@ function error() # {{{
   echo >&2 "$@"
 } # }}}
 
+function prompt() # {{{
+{
+  while true; do
+  read -p "$1" response
+    case $response in
+      [Yy]|[Yy][Ee][Ss]) return 0;;
+      [Nn]|[Nn][Oo])     return 1;;
+      *) echo "Please answer yes or no";;
+    esac
+  done
+} # }}}
+
 function has_application() # {{{
 {
   command -v "$@" > /dev/null 2>&1
@@ -79,5 +91,34 @@ source /etc/os-release
 [[ -r /etc/lsb-release ]] && source /etc/lsb-release
 debug "Done\n"
 echo "Running on $NAME release $VERSION"
+echo "To install software and configure your system, you need to be a sudoer and will have to enter your password once during this script."
 
+if prompt "You server hostname is: $(hostname), do you want to change it? [yn] " ; then
+  read -p "Enter the new hostname without its ip domain [$(hostname)]: " value
+  if [[ ! -z "$value" ]] ; then
+    echo "Updating server hostname to: $value"
+    $NOOP echo "$value" | sudo tee /etc/hostname > /dev/null
+    if [ "$ID" == "centos" ] ; then
+      if [ "VERSION_ID" == "7" ] ; then
+        for config in /etc/sysconfig/network-scripts/ifcfg-* ; do
+          if [ ! -z "$(grep 'BOOTPROTO="dhcp"' $config)" ] ; then
+            echo "Configuring interface $(basename $config | cut -f- -d1)"
+            if [ -z "$(grep DHCP_HOSTNAME $config)" ] ; then
+              $NOOP echo "DHCP_HOSTNAME=\"$value\"" | sudo tee --append $config > /dev/null
+            else
+              echo "Need to replace DHCP_HOSTNAME"
+            fi
+          fi
+        done
+        #$NOOP sudo systemctl restart network
+      fi
+    fi
+  fi
+fi
+
+if ! has_application qemu-img ; then
+  if prompt "Do you want to install KVM for virtualization? [yn] "; then
+    sudo yum -y install qemu-kvm libvirt virt-install bridge-utils
+  fi
+fi
 # }}}
